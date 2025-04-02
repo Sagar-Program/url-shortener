@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple URL Shortener</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        input { padding: 8px; width: 300px; }
+        button { padding: 8px 15px; margin-left: 10px; cursor: pointer; }
+        #shortened { margin-top: 20px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h1>Simple URL Shortener</h1>
+    <input type="text" id="longUrl" placeholder="Enter URL to shorten">
+    <button onclick="shortenUrl()">Shorten</button>
+    <div id="shortened"></div>
+
+    <script>
+        async function shortenUrl() {
+            const longUrl = document.getElementById('longUrl').value.trim();
+            if (longUrl === '' || !longUrl.startsWith('http')) {
+                document.getElementById('shortened').innerText = "Please enter a valid URL starting with http or https.";
+                return;
+            }
+            
+            const url = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`;
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error("Failed to shorten URL");
+                }
+                const shortUrl = await response.text();
+                document.getElementById('shortened').innerHTML = `Shortened URL: <a href="${shortUrl}" target="_blank">${shortUrl}</a>`;
+            } catch (error) {
+                document.getElementById('shortened').innerText = "Error shortening URL! Please try again.";
+            }
+        }
+    </script>
+</body>
+</html>
